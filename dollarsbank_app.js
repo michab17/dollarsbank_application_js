@@ -180,13 +180,16 @@ async function home() {
         name: 'choice',
         type: 'list',
         message: chalk.magentaBright.bold('What would you like to do?'),
+        pageSize: 9,
         choices : [
             '1. Deposit',
             '2. Withdraw',
             '3. Transfer Funds',
             '4. View 5 Recent Transactions',
             '5. Display Your Information',
-            '6. Sign Out'
+            '6. View Account Balance',
+            '7. Change PIN',
+            '8. Sign Out'
         ]
     })
 
@@ -200,7 +203,11 @@ async function home() {
         viewTransactions();
     } else if(choice.choice === '5. Display Your Information') {
         display();
-    } else if(choice.choice === '6. Sign Out') {
+    } else if(choice.choice === '6. View Account Balance') {
+        viewBalance();
+    } else if(choice.choice === '7. Change PIN') {
+        changePin();
+    } else if(choice.choice === '8. Sign Out') {
         menu();
     }
 }
@@ -309,6 +316,47 @@ function viewTransactions() {
 function display() {
     console.log(chalk.whiteBright(activeAccount.toString()))
     home()
+}
+
+function viewBalance() {
+    console.log(activeAccount.availableFunds)
+    home()
+}
+
+async function changePin() {
+    const inputPin = await inquirer.prompt({
+        name: 'pin',
+        type: 'password',
+        mask: '*',
+        message: chalk.magentaBright.bold('Please enter your current PIN')
+    })
+
+    if (activeAccount.pin === inputPin.pin) {
+        const newPin = await inquirer.prompt({
+            name: 'pin',
+            type: 'password',
+            mask: '*',
+            message: chalk.magentaBright.bold('Please enter your new PIN')
+        })
+        if (activeAccount.pin != newPin.pin) {
+            activeAccount.pin = newPin.pin
+
+            const spinner = ora('Changing PIN...').start();
+            
+            await sleep();
+        
+            spinner.succeed(`PIN changed successfully, please log back in with your new PIN`)
+        
+            menu()
+        } else {
+            console.log(chalk.redBright.bold('Your new PIN can not be the same as your old PIN, please try again.'))
+            changePin()
+        }
+        
+    } else {
+        console.log(chalk.redBright.bold('Your PIN was not correct, please try again.'))
+        changePin()
+    }
 }
 
 function numberValidation(input) {

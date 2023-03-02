@@ -11,7 +11,7 @@ class Account {
 
     toString() {
 		return "Name: " + this.username + "\nAddress: " + this.address + "\nPhone Number: " + this.phoneNumber + "\nUser Id: "
-				+ this.userId + "\nPassword: " + this.pin + "\nAvailable Funds: " + this.availableFunds;
+				+ this.userId + "\nPIN: " + this.pin + "\nAvailable Funds: " + this.availableFunds;
 	}
 }
 
